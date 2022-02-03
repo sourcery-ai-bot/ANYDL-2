@@ -91,10 +91,7 @@ async def take_screen_shot(video_file, output_directory, ttl):
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
-    if os.path.lexists(out_put_file_name):
-        return out_put_file_name
-    else:
-        return None
+    return out_put_file_name if os.path.lexists(out_put_file_name) else None
 
 # https://github.com/Nekmo/telegram-upload/blob/master/telegram_upload/video.py#L26
 
@@ -126,10 +123,7 @@ async def cult_small_video(video_file, output_directory, start_time, end_time):
     stdout, stderr = await process.communicate()
     e_response = stderr.decode().strip()
     t_response = stdout.decode().strip()
-    if os.path.lexists(out_put_file_name):
-        return out_put_file_name
-    else:
-        return None
+    return out_put_file_name if os.path.lexists(out_put_file_name) else None
 
 
 async def generate_screen_shots(
@@ -142,14 +136,13 @@ async def generate_screen_shots(
 ):
     metadata = extractMetadata(createParser(video_file))
     duration = 0
-    if metadata is not None:
-        if metadata.has("duration"):
-            duration = metadata.get('duration').seconds
+    if metadata is not None and metadata.has("duration"):
+        duration = metadata.get('duration').seconds
     if duration > min_duration:
         images = []
         ttl_step = duration // no_of_photos
         current_ttl = ttl_step
-        for looper in range(0, no_of_photos):
+        for _ in range(no_of_photos):
             ss_img = await take_screen_shot(video_file, output_directory, current_ttl)
             current_ttl = current_ttl + ttl_step
             if is_watermarkable:
